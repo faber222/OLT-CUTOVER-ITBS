@@ -28,8 +28,11 @@ public class DataLineFilter {
         return null;
     }
 
-    public static void main(String[] args) { // HashMap onde a chave é o aim e o valor é uma lista de objetos contendo
-                                             // os
+    public DataLineFilter() {
+    }
+
+    public void start() { // HashMap onde a chave é o aim e o valor é uma lista de objetos contendo
+                          // os
         // dados da tabela
         HashMap<Integer, ArrayList<TableEntry>> dataMap = new HashMap<>();
         String[] flows = {
@@ -80,7 +83,7 @@ public class DataLineFilter {
                     if (mode.equals("eth")) {
                         port = mappingMatcher.group(2); // Número da porta (ETH)
                         vlan = mappingMatcher.group(3); // VLAN associada
-                    } else  {
+                    } else {
                         vlan = mappingMatcher.group(2); // VLAN associada no caso de VEIP
                     }
                     continue;
@@ -94,7 +97,7 @@ public class DataLineFilter {
                     if (portType.equals("eth")) {
                         port = flowMatcher.group(2); // Número da porta (ETH)
                         vlan = flowMatcher.group(3); // Captura o valor da VLAN
-                    } 
+                    }
                     String flowType = flowMatcher.group(0); // Captura o tipo de fluxo (default ou keep)
 
                     // Define o valor de tagging baseado no flow

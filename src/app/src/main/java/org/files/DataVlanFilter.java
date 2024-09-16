@@ -9,7 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataVlanFilter {
-    public static void main(String[] args) {
+
+    public DataVlanFilter() {
+    }
+
+    public void start() {
         // Hashtable onde a chave é o "line" e o valor é uma lista de strings no formato
         // "XXXX-FFFFFFFF;0/x/y"
         HashMap<Integer, ArrayList<TableEntry2>> dataMap = new HashMap<>();
