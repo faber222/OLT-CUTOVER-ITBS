@@ -1,4 +1,4 @@
-package org.files;
+package org.filters;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -9,14 +9,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataVlanFilter {
+    private final HashMap<Integer, ArrayList<String>> dataMap2;
 
     public DataVlanFilter() {
+        this.dataMap2 = new HashMap<>();
     }
 
     public void start() {
         // Hashtable onde a chave é o "line" e o valor é uma lista de strings no formato
         // "XXXX-FFFFFFFF;0/x/y"
-        HashMap<Integer, ArrayList<TableEntry2>> dataMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader("dadosVlan.txt"))) {
             String line;
@@ -38,36 +39,18 @@ public class DataVlanFilter {
                     int newVlan = Integer.parseInt(hexMatcher.group(2)); // Captura o valor do new-vlan
 
                     // Adiciona o valor na hashMap, agrupando por chave (line)
-                    TableEntry2 entry = new TableEntry2(oldVlan, newVlan);
-                    dataMap.computeIfAbsent(aim, k -> new ArrayList<>()).add(entry);
+
+                    String entry2 = oldVlan + ";" + newVlan;
+                    this.dataMap2.computeIfAbsent(aim, K -> new ArrayList<>()).add(entry2);
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Exibe os dados do HashMap
-        dataMap.forEach((aim, entryList) -> {
-            System.out.println("Aim: " + aim);
-            for (TableEntry2 entry : entryList) {
-                System.out.println(entry);
-            }
-        });
-    }
-}
-
-// Classe para armazenar os dados da tabela
-class TableEntry2 {
-    int oldVlan;
-    int newVlan;
-
-    public TableEntry2(int oldVlan, int newVlan) {
-        this.oldVlan = oldVlan;
-        this.newVlan = newVlan;
     }
 
-    @Override
-    public String toString() {
-        return "DOWNLINK: " + oldVlan +
-                ", UPLINK: " + newVlan;
+    public HashMap<Integer, ArrayList<String>> getDataMap() {
+        return dataMap2;
     }
+
 }

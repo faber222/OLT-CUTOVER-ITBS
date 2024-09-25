@@ -1,4 +1,4 @@
-package org.files;
+package org.filters;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class DataLineFilter {
+    private HashMap<Integer, ArrayList<String>> dataMap2;
 
     public static Matcher matcherLine(String ln, String[] regexes) {
 
@@ -29,12 +30,12 @@ public class DataLineFilter {
     }
 
     public DataLineFilter() {
+        this.dataMap2 = new HashMap<>();
     }
 
     public void start() { // HashMap onde a chave é o aim e o valor é uma lista de objetos contendo
                           // os
         // dados da tabela
-        HashMap<Integer, ArrayList<TableEntry>> dataMap = new HashMap<>();
         String[] flows = {
                 "flow\\s+\\d+\\s+port\\s+(eth)\\s+(\\d+)\\s+default\\s+vlan\\s+(\\d+)",
                 "flow\\s+\\d+\\s+port\\s+(eth)\\s+(\\d+)\\s+vlan\\s+(\\d+)\\s+keep",
@@ -106,10 +107,10 @@ public class DataLineFilter {
                     // Adiciona os dados no HashMap
                     if (currentAim != null && vlan != null) {
                         // Preenche os dados da tabela com base no aim
-                        TableEntry entry = new TableEntry(currentAim, Integer.parseInt(vlan), portType, tagging, port);
-
+                        String entry2 = currentAim + ";" + vlan + ";" + mode + ";" +
+                                (tagging ? "TRUE" : "FALSE") + ";" + port;
                         // Adiciona os dados no HashMap, agrupando por aim
-                        dataMap.computeIfAbsent(currentAim, k -> new ArrayList<>()).add(entry);
+                        this.dataMap2.computeIfAbsent(currentAim, k -> new ArrayList<>()).add(entry2);
                     }
                 }
 
@@ -118,41 +119,9 @@ public class DataLineFilter {
             e.printStackTrace();
         }
 
-        // Exibe os dados do HashMap
-        dataMap.forEach((aim, entryList) -> {
-            System.out.println("Aim: " + aim);
-            for (TableEntry entry : entryList) {
-                System.out.println(entry);
-            }
-        });
-
-        // Exibe os valores de vlan-profile sem repetição
-        System.out.println("VLAN Profiles: " + vlanProfileSet);
-    }
-}
-
-// Classe para armazenar os dados da tabela
-class TableEntry {
-    int idLine;
-    int vlan;
-    String mode;
-    boolean tagging;
-    String port;
-
-    public TableEntry(int idLine, int vlan, String mode, boolean tagging, String port) {
-        this.idLine = idLine;
-        this.vlan = vlan;
-        this.mode = mode;
-        this.tagging = tagging;
-        this.port = (port != null) ? port : "NULL";
     }
 
-    @Override
-    public String toString() {
-        return "ID-LINE: " + idLine +
-                ", VLAN: " + vlan +
-                ", MODE: " + mode +
-                ", TAGGING: " + (tagging ? "TRUE" : "FALSE") +
-                ", PORT: " + port;
+    public HashMap<Integer, ArrayList<String>> getDataMap() {
+        return dataMap2;
     }
 }

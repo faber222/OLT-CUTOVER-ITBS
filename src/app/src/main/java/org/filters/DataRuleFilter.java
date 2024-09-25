@@ -1,4 +1,4 @@
-package org.files;
+package org.filters;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -10,13 +10,15 @@ import java.util.regex.Pattern;
 
 public class DataRuleFilter {
 
+    private HashMap<Integer, ArrayList<String>> dataMap;
+
     public DataRuleFilter() {
+        this.dataMap = new HashMap<>();
     }
 
     public void start() {
         // Hashtable onde a chave é o "line" e o valor é uma lista de strings no formato
         // "XXXX-FFFFFFFF;0/x/y"
-        HashMap<Integer, ArrayList<String>> dataMap = new HashMap<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader("dadosRules.txt"))) {
             String line;
@@ -41,7 +43,7 @@ public class DataRuleFilter {
                     String value = stringHex + ";" + aim;
 
                     // Adiciona o valor na hashMap, agrupando por chave (line)
-                    dataMap.computeIfAbsent(lineKey, k -> new ArrayList<>()).add(value);
+                    this.dataMap.computeIfAbsent(lineKey, k -> new ArrayList<>()).add(value);
                 }
             }
         } catch (IOException e) {
@@ -51,10 +53,20 @@ public class DataRuleFilter {
         ArrayList<Integer> lineNumbers = new ArrayList<>(dataMap.keySet());
 
         // Exibe o conteúdo do ArrayList dos números "line"
-        System.out.println("Line Numbers: " + lineNumbers);
+        // System.out.println("Line Numbers: " + lineNumbers);
         // Exibe o conteúdo da hashMap
-        dataMap.forEach((lineKey, valueList) -> {
-            System.out.println("Line " + lineKey + ": " + valueList);
+        this.dataMap.forEach((lineKey, valueList) -> {
+            // System.out.println("Line " + lineKey + ": " + valueList);
         });
     }
+
+    public HashMap<Integer, ArrayList<String>> getDataMap() {
+        return dataMap;
+    }
+
+    public void setDataMap(HashMap<Integer, ArrayList<String>> dataMap) {
+        this.dataMap = dataMap;
+    }
+
+    
 }
