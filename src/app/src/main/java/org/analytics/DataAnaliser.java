@@ -20,10 +20,10 @@ public class DataAnaliser {
     private HashMap<Integer, ArrayList<String>> dataMapVlans;
 
     public DataAnaliser() {
-        this.vlans = new ArrayList<String>();
-        this.lines = new ArrayList<String>();
-        this.rules = new ArrayList<String>();
-        this.data = new ArrayList<String>();
+        this.vlans = new ArrayList<>();
+        this.lines = new ArrayList<>();
+        this.rules = new ArrayList<>();
+        this.data = new ArrayList<>();
     }
 
     public void start() {
@@ -42,25 +42,70 @@ public class DataAnaliser {
 
     }
 
-    public ArrayList<String> dataLineSorter(int x) {
-        for (Map.Entry<Integer, ArrayList<String>> entry : this.dataMapLines.entrySet()) {
-            if (x == entry.getKey()) {
-                return entry.getValue();
-            }
+    public ArrayList<String> dataSorter(int x, int key) {
+        // Inicia um switch com base no valor da variável 'key'
+        switch (key) {
+            // Caso o valor de 'key' seja 0
+            case 0:
+                // Percorre o mapa 'dataMapLines', que mapeia um Integer para uma
+                // ArrayList<String>
+                for (Map.Entry<Integer, ArrayList<String>> entry : this.dataMapLines.entrySet()) {
+                    // Se o valor de 'x' for igual à chave da entrada atual do mapa
+                    if (x == entry.getKey()) {
+                        // Retorna o valor associado a essa chave (ArrayList<String>)
+                        return entry.getValue();
+                    }
+                }
+                break;
+
+            // Caso o valor de 'key' seja 1
+            case 1:
+                // Percorre o mapa 'dataMapVlans', que também mapeia um Integer para uma
+                // ArrayList<String>
+                for (Map.Entry<Integer, ArrayList<String>> entry : this.dataMapVlans.entrySet()) {
+                    // Se o valor de 'x' for igual à chave da entrada atual do mapa
+                    if (x == entry.getKey()) {
+                        // Retorna o valor associado a essa chave (ArrayList<String>)
+                        return entry.getValue();
+                    }
+                }
+                break;
+
+            // Se 'key' não for nem 0 nem 1, o código não faz nada (default case)
+            default:
+                break;
         }
-        return new ArrayList<>(); // Retorna uma lista vazia se não encontrar a chave
+
+        // Se nenhuma correspondência for encontrada nos mapas, retorna uma lista vazia
+        return new ArrayList<>();
     }
 
+    @SuppressWarnings("null")
     public void dataRuleSorter() {
         this.dataMapRules.forEach((lineKey, valueList) -> {
-            ArrayList<String> lines = (lineKey != null) ? dataLineSorter(lineKey) : null;
+            // recebe o retorno do dataSorter se não for nulo
+            this.lines = (lineKey != null) ? dataSorter(lineKey, 0) : null;
 
-            for (String each : valueList) {
-                for (String val : lines) {
-                    // ITBS-5f72cb27;0/9/1;58;1005;veip;TRUE;null
-                    String local = each + ";" + val;
-                    System.out.println("Local: " + local);
-                    this.data.add(local);
+            // itera os valores obtidos do rule
+            for (String eachRules : valueList) {
+                // itera os valores obtidos do line
+                for (String eachLines : this.lines) {
+                    // captura o ultimo item do array, que é a chave da hash vlan
+                    String[] arrayEachVlan = eachLines.split(";");
+                    int vlanKey = Integer.parseInt(arrayEachVlan[arrayEachVlan.length - 1]);
+
+                    // recebe o retorno do dataSorter se não for nulo
+                    this.vlans = (vlanKey != 0) ? dataSorter(vlanKey, 1) : null;
+
+                    // itera os valores obtidos do vlan
+                    for (String eachVlan : this.vlans) {
+                        String local = eachRules + ";" + eachLines + ";" + eachVlan;
+                        System.out.println("Local: " + local);
+
+                        // ITBS-5f72cb27;0/9/1;58;1005;veip;TRUE;null;1;1005;1005
+                        this.data.add(local);
+                    }
+
                 }
             }
         });
