@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,7 +47,7 @@ public class DataLineFilter {
                 "mapping\\s+\\d+\\s+port\\s+(veip)\\s+vlan\\s+(\\d+)\\s+gemport\\s+\\d+"
         };
         // ArrayList para armazenar os valores de vlan-profile sem repetição
-        HashSet<Integer> vlanProfileSet = new HashSet<>();
+        // HashSet<Integer> vlanProfileSet = new HashSet<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader("dadosLines.txt"))) {
             String line;
@@ -73,7 +72,7 @@ public class DataLineFilter {
                 Matcher vlanProfileMatcher = vlanProfilePattern.matcher(line);
                 if (vlanProfileMatcher.find()) {
                     vlanProfile = Integer.valueOf(vlanProfileMatcher.group(1));
-                    vlanProfileSet.add(vlanProfile); // Adiciona ao conjunto (sem repetição)
+                    // vlanProfileSet.add(vlanProfile); // Adiciona ao conjunto (sem repetição)
                     continue;
                 }
 
@@ -108,7 +107,7 @@ public class DataLineFilter {
                     if (currentAim != null && vlan != null) {
                         // Preenche os dados da tabela com base no aim
                         String entry2 = currentAim + ";" + vlan + ";" + mode + ";" +
-                                (tagging ? "TRUE" : "FALSE") + ";" + port;
+                                (tagging ? "TRUE" : "FALSE") + ";" + port + ";" + vlanProfile;
                         // Adiciona os dados no HashMap, agrupando por aim
                         this.dataMap2.computeIfAbsent(currentAim, k -> new ArrayList<>()).add(entry2);
                     }

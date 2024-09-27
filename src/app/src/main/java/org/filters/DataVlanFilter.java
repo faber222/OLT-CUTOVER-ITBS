@@ -39,7 +39,6 @@ public class DataVlanFilter {
                     int newVlan = Integer.parseInt(hexMatcher.group(2)); // Captura o valor do new-vlan
 
                     // Adiciona o valor na hashMap, agrupando por chave (line)
-
                     String entry2 = oldVlan + ";" + newVlan;
                     this.dataMap2.computeIfAbsent(aim, K -> new ArrayList<>()).add(entry2);
                 }
