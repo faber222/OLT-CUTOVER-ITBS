@@ -1,6 +1,7 @@
 package org;
 
 import org.analytics.DataAnaliser;
+import org.config.ConfigCutoverGenerator;
 
 public class App {
     public static void main(String[] args) {
@@ -18,6 +19,7 @@ public class App {
         // testeVlanG16.oltAccess();
         DataAnaliser dataAnaliser = new DataAnaliser();
         dataAnaliser.start();
-
+        ConfigCutoverGenerator cutover = new ConfigCutoverGenerator(dataAnaliser.getData());
+        cutover.start();
     }
 }
