@@ -36,7 +36,7 @@ public class DataRuleFilter {
                         .compile("([A-Za-z0-9]{4}-[0-9a-fA-F]{8})\\s+line\\s+(\\d+)");
                 Matcher hexMatcher = hexPattern.matcher(line);
                 if (hexMatcher.find()) {
-                    String stringHex = hexMatcher.group(1); // Captura o valor do string-hex (XXXX-XXXXXXXX)
+                    String stringHex = hexMatcher.group(1).replace("-", ""); // Captura o valor do string-hex (XXXX-XXXXXXXX)
                     int lineKey = Integer.parseInt(hexMatcher.group(2)); // Captura o valor do line como chave
 
                     // Formata o valor como "XXXX-XXXXXXXX;0/x/y"
