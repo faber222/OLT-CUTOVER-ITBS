@@ -6,8 +6,9 @@
  */
 
 plugins {
-    // Apply the application plugin to add support for building a CLI application in Java.
-    application
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'application'
+    id 'java'
 }
 
 repositories {
@@ -17,12 +18,17 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation(libs.junit.jupiter)
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // This dependency is used by the application.
-    implementation(libs.guava)
+    implementation("com.google.guava:guava:32.1.1-jre")
+    implementation("com.jtattoo:JTattoo:1.6.13")
+
+    implementation("org.xerial:sqlite-jdbc:3.43.0.0")
+    implementation("com.google.zxing:core:3.5.0")
+    implementation("commons-net:commons-net:3.8.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
