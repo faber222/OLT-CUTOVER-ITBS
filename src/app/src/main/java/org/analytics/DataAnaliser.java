@@ -42,6 +42,10 @@ public class DataAnaliser {
 
     }
 
+    public ArrayList<String> getData() {
+        return data;
+    }
+
     public ArrayList<String> dataSorter(int x, int key) {
         // Inicia um switch com base no valor da variável 'key'
         switch (key) {
@@ -100,7 +104,7 @@ public class DataAnaliser {
                     // itera os valores obtidos do vlan
                     for (String eachVlan : this.vlans) {
                         String local = eachRules + ";" + eachLines + ";" + eachVlan;
-                        System.out.println("Local: " + local);
+                        // System.out.println("Local: " + local);
 
                         // ITBS-5f72cb27;0/9/1;58;1005;veip;TRUE;null;1;1005;1005
                         this.data.add(local);
@@ -110,37 +114,4 @@ public class DataAnaliser {
             }
         });
     }
-
-    // public void saveDataToCSV(String filePath) {
-    // try (FileWriter writer = new FileWriter(filePath)) {
-    // // Cabeçalho do CSV
-    // writer.write("ID,Type,Data\n");
-
-    // // Salva os dados de 'dataMapRules'
-    // saveMapToCSV(writer, dataMapRules, "Rules");
-
-    // // Salva os dados de 'dataMapLines'
-    // saveMapToCSV(writer, dataMapLines, "Lines");
-
-    // // Salva os dados de 'dataMapVlans'
-    // saveMapToCSV(writer, dataMapVlans, "Vlans");
-
-    // System.out.println("Dados salvos em: " + filePath);
-    // } catch (IOException e) {
-    // e.printStackTrace();
-    // }
-    // }
-
-    // private void saveMapToCSV(FileWriter writer, HashMap<Integer,
-    // ArrayList<String>> dataMap, String dataType)
-    // throws IOException {
-    // for (Map.Entry<Integer, ArrayList<String>> entry : dataMap.entrySet()) {
-    // Integer id = entry.getKey();
-    // ArrayList<String> dataList = entry.getValue();
-    // for (String data : dataList) {
-    // // Escreve a linha no formato: ID, Tipo de dado, Valor
-    // writer.write(id + "," + dataType + "," + data + "\n");
-    // }
-    // }
-    // }
 }
