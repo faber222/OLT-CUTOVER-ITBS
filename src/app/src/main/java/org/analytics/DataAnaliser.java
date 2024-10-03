@@ -87,16 +87,11 @@ public class DataAnaliser {
     @SuppressWarnings("null")
     public void dataRuleSorter() {
 
-        // this.dataMapRules.forEach((lineKey, valueList) -> {
-        //     System.out.println("Line Key: " + lineKey + " -> Value List: " + valueList);
-        // });
-        // System.out.println(dataMapRules);
         this.dataMapRules.forEach((lineKey, valueList) -> {
             // recebe o retorno do dataSorter se não for nulo
             this.lines = (lineKey != null) ? dataSorter(lineKey, 0) : null;
 
             // itera os valores obtidos do rule
-            System.out.println("----------");
             for (String eachRules : valueList) {
                 String local = null;
 
@@ -108,7 +103,6 @@ public class DataAnaliser {
 
                     // recebe o retorno do dataSorter se não for nulo
                     this.vlans = (vlanKey != 0) ? dataSorter(vlanKey, 1) : null;
-                    System.out.println(this.vlans);
 
                     // itera os valores obtidos do vlan
                     for (String eachVlan : this.vlans) {
@@ -120,6 +114,5 @@ public class DataAnaliser {
                 }
             }
         });
-        System.out.println(this.data);
     }
 }

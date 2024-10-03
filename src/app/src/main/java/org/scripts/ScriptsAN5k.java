@@ -106,8 +106,8 @@ public class ScriptsAN5k {
                 scriptEth.add("cd lan");
                 scriptEth.add(String.format("set slot %s pon %s onu %s port %s service number 1", slotGpon,
                                 slotPortaPon, slotCpe, port));
-                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service 1 vlan_mode tag 0 33024 %s",
-                                slotGpon, slotPortaPon, slotCpe, port, vlan));
+                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service 1 vlan_mode %s 0 33024 %s",
+                                slotGpon, slotPortaPon, slotCpe, port, mode, vlan));
                 scriptEth.add("cd ..");
                 scriptEth.add("cd ..");
                 return scriptEth;

@@ -185,7 +185,7 @@ public class ConfigCutoverGenerator {
                 configProv.add(scriptsAN6k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
 
                 if (mode.equals("veip")) {
-                    configEth = null;
+                    // configEth = null;
                     this.profileServMode = scriptsAN6k.configProfileServMode();
                     if (tagging.equals("TRUE")) {
                         configVeip.add(scriptsAN6k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, vlan));
@@ -193,7 +193,7 @@ public class ConfigCutoverGenerator {
                         configVeip.add(scriptsAN6k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, oldVlan));
                     }
                 } else {
-                    configVeip = null;
+                    // configVeip = null;
                     this.profileServMode = null;
                     final String downStreamVlan = tagging.equals("TRUE") ? "transparent" : "tag";
                     configEth.add(scriptsAN6k.configEth(
@@ -250,7 +250,9 @@ public class ConfigCutoverGenerator {
                 } else {
                     // configVeip = null;
                     this.profileServMode = null;
+                    System.out.println(tagging);
                     final String downStreamVlan = tagging.equals("TRUE") ? "transparent" : "tag";
+                    System.out.println("downStream: " + downStreamVlan);
                     configEth.add(scriptsAN5k.configEth(
                             this.slotChassiGpon, slotPortaPon, slotCpe, port,
                             downStreamVlan, vlan));
