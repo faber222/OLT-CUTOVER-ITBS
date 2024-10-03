@@ -27,16 +27,16 @@ public class DataAnaliser {
     }
 
     public void start() {
-        DataLineFilter lineFilter = new DataLineFilter();
         DataRuleFilter ruleFilter = new DataRuleFilter();
+        DataLineFilter lineFilter = new DataLineFilter();
         DataVlanFilter vlanFilter = new DataVlanFilter();
 
-        vlanFilter.start();
-        lineFilter.start();
         ruleFilter.start();
-        this.dataMapVlans = vlanFilter.getDataMap();
-        this.dataMapLines = lineFilter.getDataMap();
+        lineFilter.start();
+        vlanFilter.start();
         this.dataMapRules = ruleFilter.getDataMap();
+        this.dataMapLines = lineFilter.getDataMap();
+        this.dataMapVlans = vlanFilter.getDataMap();
 
         dataRuleSorter();
 
@@ -86,12 +86,20 @@ public class DataAnaliser {
 
     @SuppressWarnings("null")
     public void dataRuleSorter() {
+
+        // this.dataMapRules.forEach((lineKey, valueList) -> {
+        //     System.out.println("Line Key: " + lineKey + " -> Value List: " + valueList);
+        // });
+        // System.out.println(dataMapRules);
         this.dataMapRules.forEach((lineKey, valueList) -> {
             // recebe o retorno do dataSorter se não for nulo
             this.lines = (lineKey != null) ? dataSorter(lineKey, 0) : null;
 
             // itera os valores obtidos do rule
+            System.out.println("----------");
             for (String eachRules : valueList) {
+                String local = null;
+
                 // itera os valores obtidos do line
                 for (String eachLines : this.lines) {
                     // captura o ultimo item do array, que é a chave da hash vlan
@@ -100,18 +108,18 @@ public class DataAnaliser {
 
                     // recebe o retorno do dataSorter se não for nulo
                     this.vlans = (vlanKey != 0) ? dataSorter(vlanKey, 1) : null;
+                    System.out.println(this.vlans);
 
                     // itera os valores obtidos do vlan
                     for (String eachVlan : this.vlans) {
-                        String local = eachRules + ";" + eachLines + ";" + eachVlan;
-                        // System.out.println("Local: " + local);
+                        local = eachRules + ";" + eachLines + ";" + eachVlan;
 
                         // ITBS-5f72cb27;0/9/1;58;1005;veip;TRUE;null;1;1005;1005
-                        this.data.add(local);
                     }
-
+                    this.data.add(local);
                 }
             }
         });
+        System.out.println(this.data);
     }
 }

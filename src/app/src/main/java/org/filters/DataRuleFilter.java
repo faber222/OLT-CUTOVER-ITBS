@@ -49,15 +49,6 @@ public class DataRuleFilter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // Criando um ArrayList dos números "line"
-        ArrayList<Integer> lineNumbers = new ArrayList<>(dataMap.keySet());
-
-        // Exibe o conteúdo do ArrayList dos números "line"
-        // System.out.println("Line Numbers: " + lineNumbers);
-        // Exibe o conteúdo da hashMap
-        this.dataMap.forEach((lineKey, valueList) -> {
-            // System.out.println("Line " + lineKey + ": " + valueList);
-        });
     }
 
     public HashMap<Integer, ArrayList<String>> getDataMap() {

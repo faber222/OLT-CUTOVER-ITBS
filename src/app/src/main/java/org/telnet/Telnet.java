@@ -102,21 +102,27 @@ public class Telnet implements Runnable {
     }
 
     private void applyCommands() throws InterruptedException {
-        out.println("enable");
+        out.println("en");
+        Thread.sleep(100);
+        out.println("conf t");
+        Thread.sleep(100);
+        out.println("line width 256");
         Thread.sleep(100);
         switch (this.type) {
             case "Rules":
                 out.println("sh run deploy-profile-rule");
-                Thread.sleep(100);
+                Thread.sleep(1000);
+                out.println("");
                 break;
             case "Lines":
                 out.println("sh run deploy-profile-line");
-                Thread.sleep(100);
+                Thread.sleep(1000);
+                out.println("");
                 break;
             case "Vlan":
                 out.println("sh run deploy-profile-vlan");
-                // Thread.sleep(1000);
-                Thread.sleep(100);
+                Thread.sleep(1000);
+                out.println("");
                 break;
             default:
                 throw new AssertionError();

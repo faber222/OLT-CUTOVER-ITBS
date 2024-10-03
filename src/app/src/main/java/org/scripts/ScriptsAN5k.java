@@ -39,14 +39,13 @@ public class ScriptsAN5k {
          * @return Lista de strings contendo todo o script de provisionamento de cpes
          */
         public List<String> provisionaCPE(final String serialNumberCpe, final String slotGpon,
-                        final String slotPortaPon,
-                        final String slotCpe, final String cpeCapaProfile) {
+                        final String slotPortaPon,final String slotCpe) {
                 final List<String> scriptProvisionaCpe = new ArrayList<>();
                 // final StringBuilder mgrStringBuilder = new StringBuilder();
                 scriptProvisionaCpe.add("cd onu");
                 scriptProvisionaCpe.add(String.format(
-                                "set whitelist phy_addr address %s password null action add slot %s pon %s onu %s type %s",
-                                serialNumberCpe, slotGpon, slotPortaPon, slotCpe, cpeCapaProfile));
+                                "set whitelist phy_addr address %s password null action add slot %s pon %s onu %s",
+                                serialNumberCpe, slotGpon, slotPortaPon, slotCpe));
                 scriptProvisionaCpe.add("cd ..");
                 return scriptProvisionaCpe;
         }
@@ -71,17 +70,18 @@ public class ScriptsAN5k {
          * @param slotGpon     Slot da placa no chassi
          * @param slotPortaPon Porta pon onde a CPE se encontra
          * @param slotCpe      Slot da pon onde a CPE se encontra
+         * @param index        Index do veip
          * @param vlan         Vlan do VEIP
          * @return Lista de strings contendo todo o script para configuração de veip
          */
-        public List<String> configVeip(final String slotGpon, final String slotPortaPon, final String slotCpe,
+        public List<String> configVeip(final String slotGpon, final String slotPortaPon, final String slotCpe, final String index,
                         final String vlan) {
                 final List<String> scriptVeip = new ArrayList<>();
                 scriptVeip.add("cd onu");
                 scriptVeip.add("cd lan");
                 scriptVeip.add(String.format(
-                                "set epon slot %s pon %s onu %s port 1 onuveip 1 33024 %s 65535 33024 65535 65535 33024 65535 65535 0 30 65535",
-                                slotGpon, slotPortaPon, slotCpe, vlan));
+                                "set epon slot %s pon %s onu %s port 1 onuveip %s 33024 %s 65535 33024 65535 65535 33024 65535 65535 0 30 65535",
+                                slotGpon, slotPortaPon, slotCpe, index, vlan));
                 scriptVeip.add("cd ..");
                 scriptVeip.add("cd ..");
                 return scriptVeip;
