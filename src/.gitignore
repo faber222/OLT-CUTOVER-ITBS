@@ -32,6 +32,9 @@ build
 *.txt
 *.wpd
 *.wps
+*.class
+
+.gradle/*
 
 ### VisualStudioCode ###
 .vscode/*

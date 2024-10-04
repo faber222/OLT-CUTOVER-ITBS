@@ -150,6 +150,8 @@ public class ConfigCutoverGenerator {
         final ScriptsAN5k scriptsAN5k = new ScriptsAN5k();
         final ScriptsAN6k scriptsAN6k = new ScriptsAN6k();
 
+        final HashSet<String> cpe = new HashSet<>();
+        Map<String, Integer> gponSnCountMap = new HashMap<>();
         if (this.oltType.equals("AN6000")) {
             this.ponAuth = null;
             for (final String each : this.vlansUplink) {
@@ -182,7 +184,18 @@ public class ConfigCutoverGenerator {
                 final String port = splitInicial[6]; // NULL
                 final String oldVlan = splitInicial[8]; // 1005
 
-                configProv.add(scriptsAN6k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
+                // Verifica se o gponSn já existe no map de contagem
+                int count = gponSnCountMap.getOrDefault(gponSn, 0);
+                count++; // Incrementa a contagem para o gponSn atual
+                gponSnCountMap.put(gponSn, count); // Atualiza a contagem no mapa
+
+                // Atualiza o valor do index com base na contagem
+                String index = String.valueOf(count);
+
+                if (!cpe.contains(gponSn)) {
+                    configProv.add(scriptsAN6k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
+                    cpe.add(gponSn);
+                }
 
                 if (mode.equals("veip")) {
                     // configEth = null;
@@ -190,7 +203,8 @@ public class ConfigCutoverGenerator {
                     if (tagging.equals("TRUE")) {
                         configVeip.add(scriptsAN6k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, vlan));
                     } else {
-                        configVeip.add(scriptsAN6k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, oldVlan));
+                        configVeip.add(
+                                scriptsAN6k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, oldVlan));
                     }
                 } else {
                     // configVeip = null;
@@ -198,7 +212,7 @@ public class ConfigCutoverGenerator {
                     final String downStreamVlan = tagging.equals("TRUE") ? "transparent" : "tag";
                     configEth.add(scriptsAN6k.configEth(
                             this.slotChassiGpon, slotPortaPon, slotCpe, port,
-                            downStreamVlan, vlan));
+                            downStreamVlan, index, vlan));
 
                 }
             }
@@ -208,8 +222,6 @@ public class ConfigCutoverGenerator {
             for (final String each : this.vlansUplink) {
                 configUplinkVlan.add(scriptsAN5k.addVlanToUplink(each, this.slotChassiUplink, this.slotPortaUplink));
             }
-            final HashSet<String> cpe = new HashSet<>();
-            Map<String, Integer> gponSnCountMap = new HashMap<>();
 
             for (final String lines : this.data) {
                 final String[] splitInicial = lines.split(";");
@@ -237,7 +249,7 @@ public class ConfigCutoverGenerator {
                     configProv.add(scriptsAN5k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
 
                     cpe.add(gponSn);
-                } 
+                }
                 if (mode.equals("veip")) {
                     // configEth = null;
                     this.profileServMode = scriptsAN5k.configProfileServMode();
@@ -245,7 +257,8 @@ public class ConfigCutoverGenerator {
                         configVeip.add(scriptsAN5k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, index, vlan));
                     } else {
                         configVeip
-                                .add(scriptsAN5k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, index, oldVlan));
+                                .add(scriptsAN5k.configVeip(this.slotChassiGpon, slotPortaPon, slotCpe, index,
+                                        oldVlan));
                     }
                 } else {
                     // configVeip = null;
@@ -255,7 +268,7 @@ public class ConfigCutoverGenerator {
                     System.out.println("downStream: " + downStreamVlan);
                     configEth.add(scriptsAN5k.configEth(
                             this.slotChassiGpon, slotPortaPon, slotCpe, port,
-                            downStreamVlan, vlan));
+                            downStreamVlan, index, vlan));
 
                 }
             }

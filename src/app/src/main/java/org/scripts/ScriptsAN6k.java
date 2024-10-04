@@ -59,7 +59,7 @@ public class ScriptsAN6k {
                 final List<String> scriptVeip = new ArrayList<>();
                 scriptVeip.add(String.format("interface pon 1/%s/%s", slotGpon, slotPortaPon));
                 scriptVeip.add(String.format(
-                                "onu veip %s cvlan-tpid  33024 cvlan-id %s cvlan-cos 65535 trans-vlan-tpid 33024 trans-vlan-id 65535 trans-vlan-cos 65535 svlan-tpid 33024 svlan-vid 65535 svlan-cos 65535 tls 0 service-mode-profile INTELBRAS_ROUTER svlan-profile 65535 service-type 1",
+                                "onu veip %s cvlan-tpid 33024 cvlan-id %s cvlan-cos 65535 trans-vlan-tpid 33024 trans-vlan-id 65535 trans-vlan-cos 65535 svlan-tpid 33024 svlan-vid 65535 svlan-cos 65535 tls 0 service-mode-profile 30 svlan-profile 65535 service-type 1",
                                 slotCpe, vlan));
                 scriptVeip.add("exit");
                 return scriptVeip;
@@ -73,17 +73,18 @@ public class ScriptsAN6k {
          * @param slotCpe      Slot da pon onde a CPE se encontra
          * @param port         Numero da porta eth mapeada
          * @param mode         Modo "tag" tira a vlan, "transparent" mantem a vlan
+         * @param index        Identificador do service count
          * @param vlan         Vlan da eth
          * @return Lista de strings contendo todo o script para configuração de eth
          *         bridge
          */
         public List<String> configEth(final String slotGpon, final String slotPortaPon, final String slotCpe,
-                        final String port, final String mode, final String vlan) {
+                        final String port, final String mode, final String index, final String vlan) {
                 final List<String> scriptVeip = new ArrayList<>();
                 scriptVeip.add(String.format("interface pon 1/%s/%s", slotGpon, slotPortaPon));
-                scriptVeip.add(String.format("onu port vlan %s eth %s service count 1", slotCpe, port));
-                scriptVeip.add(String.format("onu port vlan %s eth %s service 1 %s priority 0 tpid 33024 vid %s",
-                                slotCpe, port, mode, vlan));
+                scriptVeip.add(String.format("onu port vlan %s eth %s service count %s", slotCpe, port, index));
+                scriptVeip.add(String.format("onu port vlan %s eth %s service %s %s priority 0 tpid 33024 vid %s",
+                                slotCpe, port, index, mode, vlan));
                 scriptVeip.add("exit");
                 return scriptVeip;
         }

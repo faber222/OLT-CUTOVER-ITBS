@@ -21,7 +21,7 @@ public class App {
         DataAnaliser dataAnaliser = new DataAnaliser();
         dataAnaliser.start();
         ArrayList<String> rangePortaDestino = new ArrayList<>();
-        ConfigCutoverGenerator cutover = new ConfigCutoverGenerator(dataAnaliser.getData(), "AN5000",
+        ConfigCutoverGenerator cutover = new ConfigCutoverGenerator(dataAnaliser.getData(), "AN6000",
                 rangePortaDestino, "5", "10", "2");
         cutover.start();
     }

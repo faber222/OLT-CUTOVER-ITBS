@@ -39,7 +39,7 @@ public class ScriptsAN5k {
          * @return Lista de strings contendo todo o script de provisionamento de cpes
          */
         public List<String> provisionaCPE(final String serialNumberCpe, final String slotGpon,
-                        final String slotPortaPon,final String slotCpe) {
+                        final String slotPortaPon, final String slotCpe) {
                 final List<String> scriptProvisionaCpe = new ArrayList<>();
                 // final StringBuilder mgrStringBuilder = new StringBuilder();
                 scriptProvisionaCpe.add("cd onu");
@@ -74,7 +74,8 @@ public class ScriptsAN5k {
          * @param vlan         Vlan do VEIP
          * @return Lista de strings contendo todo o script para configuração de veip
          */
-        public List<String> configVeip(final String slotGpon, final String slotPortaPon, final String slotCpe, final String index,
+        public List<String> configVeip(final String slotGpon, final String slotPortaPon, final String slotCpe,
+                        final String index,
                         final String vlan) {
                 final List<String> scriptVeip = new ArrayList<>();
                 scriptVeip.add("cd onu");
@@ -95,19 +96,20 @@ public class ScriptsAN5k {
          * @param slotCpe      Slot da pon onde a CPE se encontra
          * @param port         Numero da porta eth mapeada
          * @param mode         Modo "tag" tira a vlan, "transparent" mantem a vlan
+         * @param index        Index do eth
          * @param vlan         Vlan da eth
          * @return Lista de strings contendo todo o script para configuração de eth
          *         bridge
          */
         public List<String> configEth(final String slotGpon, final String slotPortaPon, final String slotCpe,
-                        final String port, final String mode, final String vlan) {
+                        final String port, final String mode, final String index, final String vlan) {
                 final List<String> scriptEth = new ArrayList<>();
                 scriptEth.add("cd onu");
                 scriptEth.add("cd lan");
-                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service number 1", slotGpon,
-                                slotPortaPon, slotCpe, port));
-                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service 1 vlan_mode %s 0 33024 %s",
-                                slotGpon, slotPortaPon, slotCpe, port, mode, vlan));
+                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service number %s", slotGpon,
+                                slotPortaPon, slotCpe, port, index));
+                scriptEth.add(String.format("set slot %s pon %s onu %s port %s service %s vlan_mode %s 0 33024 %s",
+                                slotGpon, slotPortaPon, slotCpe, port, index, mode, vlan));
                 scriptEth.add("cd ..");
                 scriptEth.add("cd ..");
                 return scriptEth;
