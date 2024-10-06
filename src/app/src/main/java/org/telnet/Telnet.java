@@ -13,6 +13,8 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 public class Telnet implements Runnable {
 
     private Socket socket;
@@ -26,7 +28,6 @@ public class Telnet implements Runnable {
     private final int port;
     private final String username;
     private final String password;
-    private final String type;
 
     /**
      * Construtor padrão que inicializa os atributos com os valores fornecidos.
@@ -36,13 +37,12 @@ public class Telnet implements Runnable {
      * @param user O nome de usuário para autenticação Telnet.
      * @param pwd  A senha para autenticação Telnet.
      */
-    public Telnet(final String host, final int port, final String user, final String pwd, final String type) {
+    public Telnet(final String host, final int port, final String user, final String pwd) {
         // Inicialização dos atributos com os valores fornecidos
         this.host = host;
         this.port = port;
         this.username = user;
         this.password = pwd;
-        this.type = type;
     }
 
     public void oltAccess() {
@@ -64,17 +64,22 @@ public class Telnet implements Runnable {
             Thread.sleep(1000);
 
             applyCommands();
+
+            // Espera até que o processamento do comando (sh run) esteja completo
+            thread.join(); // Aguarda o término da thread de leitura (run)
+
+            // Somente após a leitura completa, finalMessage é chamado
             finalMessage();
         } catch (final UnknownHostException exception) {
-            System.err.println("Host " + host + " desconhecido");
-            // JOptionPane.showMessageDialog(null, "Host " + host
-            // + " desconhecido", "Aviso!",
-            // JOptionPane.INFORMATION_MESSAGE);
-        } catch (final IOException exception) {
             System.err.println("Erro na entrada.");
-            // JOptionPane.showMessageDialog(null,
-            // "Erro na entrada.", "Aviso!",
-            // JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Erro na entrada.", "Aviso!",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (final IOException exception) {
+            System.err.println("Host " + host + " desconhecido");
+            JOptionPane.showMessageDialog(null, "Host " + host
+                    + " desconhecido", "Aviso!",
+                    JOptionPane.INFORMATION_MESSAGE);
         } catch (InterruptedException ex) {
         }
     }
@@ -85,13 +90,20 @@ public class Telnet implements Runnable {
      * em tempo real das respostas do dispositivo de rede.
      */
     public void run() {
+        String promptG16 = "G16(config)#"; // Prompt que indica o fim da saída G16
+        String promptG08 = "G08(config)#"; // Prompt que indica o fim da saída G08
         try (BufferedWriter fileWriter = new BufferedWriter(
-                new FileWriter("dados" + this.type + ".txt", false))) {
+                new FileWriter("dados.txt", false))) {
             String answer;
             while (active && !Thread.currentThread().isInterrupted()) {
                 if ((answer = in.readLine()) != null) {
                     fileWriter.write(answer);
-                    fileWriter.newLine(); // Adiciona uma nova linha após cada resposta
+                    fileWriter.newLine();
+                    // Verifique se o prompt final foi recebido
+                    if (answer.trim().endsWith(promptG16) || answer.trim().endsWith(promptG08)) {
+                        active = false; // Termina a leitura
+                        break;
+                    }
                 }
             }
         } catch (final IOException exception) {
@@ -106,28 +118,11 @@ public class Telnet implements Runnable {
         Thread.sleep(100);
         out.println("conf t");
         Thread.sleep(100);
-        out.println("line width 256");
+        out.println("screen-rows per-page 0");
         Thread.sleep(100);
-        switch (this.type) {
-            case "Rules":
-                out.println("sh run deploy-profile-rule");
-                Thread.sleep(1000);
-                out.println("");
-                break;
-            case "Lines":
-                out.println("sh run deploy-profile-line");
-                Thread.sleep(1000);
-                out.println("");
-                break;
-            case "Vlan":
-                out.println("sh run deploy-profile-vlan");
-                Thread.sleep(1000);
-                out.println("");
-                break;
-            default:
-                throw new AssertionError();
-        }
-        out.println("exit");
+        out.println("sh run ");
+        Thread.sleep(100);
+        out.println("");
         Thread.sleep(100);
     }
 
@@ -135,8 +130,6 @@ public class Telnet implements Runnable {
      * Mensagem de alerta ao usuário
      */
     private void finalMessage() {
-        // Define active como false para encerrar a thread
-        active = false;
 
         // Interrompe a thread, caso esteja esperando
         if (thread != null) {
