@@ -25,11 +25,14 @@ public class DataLineFilter {
         // Se nenhum regex for válido, retorna null
         return null;
     }
-
     private final HashMap<Integer, ArrayList<String>> dataMap2;
+
+    private final String path;
 
     public DataLineFilter() {
         this.dataMap2 = new HashMap<>();
+        // this.path = "dadosLines.txt";
+        this.path = "dados.txt";
     }
 
     public void start() { // HashMap onde a chave é o aim e o valor é uma lista de objetos contendo
@@ -44,8 +47,8 @@ public class DataLineFilter {
         };
 
         // String[] mappings = {
-        //         "mapping\\s+\\d+\\s+port\\s+(eth)\\s+(\\d+)\\s+vlan\\s+(\\d+)\\s+gemport\\s+\\d+",
-        //         "mapping\\s+\\d+\\s+port\\s+(veip)\\s+vlan\\s+(\\d+)\\s+gemport\\s+\\d+"
+        // "mapping\\s+\\d+\\s+port\\s+(eth)\\s+(\\d+)\\s+vlan\\s+(\\d+)\\s+gemport\\s+\\d+",
+        // "mapping\\s+\\d+\\s+port\\s+(veip)\\s+vlan\\s+(\\d+)\\s+gemport\\s+\\d+"
         // };
         // // dados da tabela
         // String[] flows = {
@@ -68,7 +71,7 @@ public class DataLineFilter {
         // ArrayList para armazenar os valores de vlan-profile sem repetição
         // HashSet<Integer> vlanProfileSet = new HashSet<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("dadosLines.txt"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(this.path))) {
             String line;
             Integer currentAim = null; // Variável para armazenar o aim atual
             Integer vlanProfile = null; // Variável para armazenar o vlan-profile
