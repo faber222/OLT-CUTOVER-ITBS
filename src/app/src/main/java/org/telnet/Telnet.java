@@ -10,7 +10,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
@@ -48,7 +50,18 @@ public class Telnet implements Runnable {
     public void oltAccess() {
         try {
             // Configuração do socket e streams de entrada/saída
-            socket = new Socket(host, port);
+            int timeout = 5000; // 5 segundos
+            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            socket = new Socket();
+
+            // Tenta conectar dentro do tempo limite especificado
+            socket.connect(socketAddress, timeout);
+
+            // Verifica se o socket foi realmente conectado
+            if (socket.isConnected()) {
+                System.out.println("Socket conectado com sucesso ao host " + host + " na porta " + port);
+            }
+
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -75,10 +88,11 @@ public class Telnet implements Runnable {
             JOptionPane.showMessageDialog(null,
                     "Erro na entrada.", "Aviso!",
                     JOptionPane.INFORMATION_MESSAGE);
+            System.err.println("Host desconhecido: " + host);
         } catch (final IOException exception) {
-            System.err.println("Host " + host + " desconhecido");
-            JOptionPane.showMessageDialog(null, "Host " + host
-                    + " desconhecido", "Aviso!",
+            System.err.println("Erro de I/O ao tentar conectar ao host " + host + " na porta " + port);
+            JOptionPane.showMessageDialog(null, "Erro de I/O ao tentar conectar ao host " + host + " na porta "
+                    + port, "Aviso!",
                     JOptionPane.INFORMATION_MESSAGE);
         } catch (InterruptedException ex) {
         }
