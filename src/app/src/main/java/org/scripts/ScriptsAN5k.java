@@ -39,13 +39,13 @@ public class ScriptsAN5k {
          * @return Lista de strings contendo todo o script de provisionamento de cpes
          */
         public List<String> provisionaCPE(final String serialNumberCpe, final String slotGpon,
-                        final String slotPortaPon, final String slotCpe) {
+                        final String slotPortaPon, final String slotCpe, final String cpeType) {
                 final List<String> scriptProvisionaCpe = new ArrayList<>();
                 // final StringBuilder mgrStringBuilder = new StringBuilder();
                 scriptProvisionaCpe.add("cd onu");
                 scriptProvisionaCpe.add(String.format(
-                                "set whitelist phy_addr address %s password null action add slot %s pon %s onu %s",
-                                serialNumberCpe, slotGpon, slotPortaPon, slotCpe));
+                                "set whitelist phy_addr address %s password null action add slot %s pon %s onu %s type %s",
+                                serialNumberCpe, slotGpon, slotPortaPon, slotCpe, cpeType));
                 scriptProvisionaCpe.add("cd ..");
                 return scriptProvisionaCpe;
         }

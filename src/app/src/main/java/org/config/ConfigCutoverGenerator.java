@@ -191,13 +191,10 @@ public class ConfigCutoverGenerator {
 
                 // Atualiza o valor do index com base na contagem
                 String index = String.valueOf(count);
-
-                if (!cpe.contains(gponSn)) {
-                    configProv.add(scriptsAN6k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
-                    cpe.add(gponSn);
-                }
+                String capability = "5506-01-A1";
 
                 if (mode.equals("veip")) {
+                    capability = "HG260";
                     // configEth = null;
                     this.profileServMode = scriptsAN6k.configProfileServMode();
                     if (tagging.equals("TRUE")) {
@@ -214,6 +211,12 @@ public class ConfigCutoverGenerator {
                             this.slotChassiGpon, slotPortaPon, slotCpe, port,
                             downStreamVlan, index, vlan));
 
+                }
+
+                if (!cpe.contains(gponSn)) {
+                    configProv.add(scriptsAN6k.provisionaCPE(gponSn,
+                            capability, this.slotChassiGpon, slotPortaPon, slotCpe));
+                    cpe.add(gponSn);
                 }
             }
         } else {
@@ -244,13 +247,10 @@ public class ConfigCutoverGenerator {
 
                 // Atualiza o valor do index com base na contagem
                 String index = String.valueOf(count);
+                String capability = "5506-01-A1";
 
-                if (!cpe.contains(gponSn)) {
-                    configProv.add(scriptsAN5k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe));
-
-                    cpe.add(gponSn);
-                }
                 if (mode.equals("veip")) {
+                    capability = "HG260";
                     // configEth = null;
                     this.profileServMode = scriptsAN5k.configProfileServMode();
                     if (tagging.equals("TRUE")) {
@@ -270,6 +270,13 @@ public class ConfigCutoverGenerator {
                             this.slotChassiGpon, slotPortaPon, slotCpe, port,
                             downStreamVlan, index, vlan));
 
+                }
+
+                if (!cpe.contains(gponSn)) {
+                    configProv.add(scriptsAN5k.provisionaCPE(gponSn, this.slotChassiGpon, slotPortaPon, slotCpe,
+                            capability));
+
+                    cpe.add(gponSn);
                 }
             }
         }

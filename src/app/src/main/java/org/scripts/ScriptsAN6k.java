@@ -17,19 +17,17 @@ public class ScriptsAN6k {
          * Função usada para criar o script para provisionamento de CPE
          * 
          * @param serialNumberCpe Serial number da CPE, seguir esse padrao FHTT12345678
+         * @param cpeType         Capability da CPE
          * @param slotGpon        Slot da placa no chassi
          * @param slotPortaPon    Porta pon onde a CPE se encontra
          * @param slotCpe         Slot da pon onde desejamos provisionar a CPE
          * @return Lista de strings contendo todo o script de provisionamento de cpes
          */
-        public List<String> provisionaCPE(final String serialNumberCpe, final String slotGpon,
+        public List<String> provisionaCPE(final String serialNumberCpe, final String cpeType, final String slotGpon,
                         final String slotPortaPon, final String slotCpe) {
                 final List<String> scriptProvisionaCpe = new ArrayList<>();
-                // final StringBuilder mgrStringBuilder = new StringBuilder();
-                // scriptProvisionaCpe.add("cd onu");
-                scriptProvisionaCpe.add(String.format("whitelist add phy-id %s slot %s pon %s onuid %s",
-                                serialNumberCpe, slotGpon, slotPortaPon, slotCpe));
-                // scriptProvisionaCpe.add("exit");
+                scriptProvisionaCpe.add(String.format("whitelist add phy-id %s type %s slot %s pon %s onuid %s",
+                                serialNumberCpe, cpeType, slotGpon, slotPortaPon, slotCpe));
                 return scriptProvisionaCpe;
         }
 
