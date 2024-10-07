@@ -8,8 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
+
+import javax.swing.JOptionPane;
 
 public class TelnetFhtt implements Runnable {
 
@@ -37,10 +41,21 @@ public class TelnetFhtt implements Runnable {
     public void oltAccess(final String nomeArq) throws InterruptedException {
         try {
             // Configuração do socket e streams de entrada/saída
-            socket = new Socket(host, port);
+            int timeout = 5000; // 5 segundos
+            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            socket = new Socket();
+
+            // Tenta conectar dentro do tempo limite especificado
+            socket.connect(socketAddress, timeout);
+
+            // Verifica se o socket foi realmente conectado
+            if (socket.isConnected()) {
+                System.out.println("Socket conectado com sucesso ao host " + host + " na porta " + port);
+            }
+            
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
-            
+
             active = true;
             thread = new Thread(this);
             thread.start();
@@ -61,19 +76,24 @@ public class TelnetFhtt implements Runnable {
             // Ler comandos do arquivo
             readCommandsFromFile(nomeArq);
 
+            // Espera até que o processamento do comando (sh run) esteja completo
+            thread.join(); // Aguarda o término da thread de leitura (run)
+
             // Mostra a mensagem que deu tudo certo e alerta o usuario para salvar as
             // configurações
             finalMessage();
         } catch (final UnknownHostException exception) {
-            System.err.println("Host " + host + " desconhecido");
-            // JOptionPane.showMessageDialog(null, "Host " + host
-            //         + " desconhecido", "Aviso!",
-            //         JOptionPane.INFORMATION_MESSAGE);
-        } catch (final IOException exception) {
             System.err.println("Erro na entrada.");
-            // JOptionPane.showMessageDialog(null,
-            //         "Erro na entrada.", "Aviso!",
-            //         JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null,
+                    "Erro na entrada.", "Aviso!",
+                    JOptionPane.INFORMATION_MESSAGE);
+            System.err.println("Host desconhecido: " + host);
+        } catch (final IOException exception) {
+            System.err.println("Erro de I/O ao tentar conectar ao host " + host + " na porta " + port);
+            JOptionPane.showMessageDialog(null, "Erro de I/O ao tentar conectar ao host " + host + " na porta "
+                    + port, "Aviso!",
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (InterruptedException ex) {
         }
     }
 
@@ -84,7 +104,6 @@ public class TelnetFhtt implements Runnable {
             while (active && !Thread.currentThread().isInterrupted()) {
                 if ((answer = in.readLine()) != null) {
                     fileWriter.write(answer);
-                    // System.out.println(answer);
                     fileWriter.newLine(); // Adiciona uma nova linha após cada resposta
                 }
             }
@@ -92,8 +111,8 @@ public class TelnetFhtt implements Runnable {
             if (active) {
                 System.err.println("Erro de comunicacao.");
                 // JOptionPane.showMessageDialog(null,
-                //         "Erro de comunicacao.", "Aviso!",
-                //         JOptionPane.INFORMATION_MESSAGE);
+                // "Erro de comunicacao.", "Aviso!",
+                // JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -126,10 +145,10 @@ public class TelnetFhtt implements Runnable {
     }
 
     private void finalMessage() {
-        // JOptionPane.showMessageDialog(null, "Comandos aplicados com sucesso!", "Aviso!",
-        //         JOptionPane.INFORMATION_MESSAGE);
-        // JOptionPane.showMessageDialog(null, "NAO ESQUECA DE VALIDAR E SALVAR AS CONFIGURACOES!", "Aviso!",
-        //         JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Comandos aplicados com sucesso!", "Aviso!",
+                JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(null, "NAO ESQUECA DE VALIDAR E SALVAR AS CONFIGURACOES!", "Aviso!",
+                JOptionPane.INFORMATION_MESSAGE);
 
         // Interrompe a thread, caso esteja esperando
         if (thread != null) {
