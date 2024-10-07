@@ -104,8 +104,7 @@ public class Telnet implements Runnable {
      * em tempo real das respostas do dispositivo de rede.
      */
     public void run() {
-        String promptG16 = "G16(config)#"; // Prompt que indica o fim da saída G16
-        String promptG08 = "G08(config)#"; // Prompt que indica o fim da saída G08
+        String prompt = "(config)#"; // Prompt que indica o fim da saída
         try (BufferedWriter fileWriter = new BufferedWriter(
                 new FileWriter("dados.txt", false))) {
             String answer;
@@ -114,7 +113,7 @@ public class Telnet implements Runnable {
                     fileWriter.write(answer);
                     fileWriter.newLine();
                     // Verifique se o prompt final foi recebido
-                    if (answer.trim().endsWith(promptG16) || answer.trim().endsWith(promptG08)) {
+                    if (answer.trim().endsWith(prompt)) {
                         active = false; // Termina a leitura
                         break;
                     }
