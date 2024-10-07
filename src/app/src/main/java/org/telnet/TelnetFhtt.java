@@ -1,5 +1,7 @@
 package org.telnet;
 
+import static java.lang.Thread.sleep;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -38,7 +40,7 @@ public class TelnetFhtt implements Runnable {
         this.oltName = oltName;
     }
 
-    public void oltAccess(final String nomeArq) throws InterruptedException {
+    public void oltAccess(final String nomeArq){
         try {
             // Configuração do socket e streams de entrada/saída
             int timeout = 5000; // 5 segundos
@@ -52,7 +54,7 @@ public class TelnetFhtt implements Runnable {
             if (socket.isConnected()) {
                 System.out.println("Socket conectado com sucesso ao host " + host + " na porta " + port);
             }
-            
+
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out = new PrintWriter(socket.getOutputStream(), true);
 
@@ -63,21 +65,21 @@ public class TelnetFhtt implements Runnable {
 
             // Login
             out.println(username);
-            Thread.sleep(100);
+            sleep(100);
             out.println(password);
-            Thread.sleep(100);
+            sleep(100);
             out.println("enable");
-            Thread.sleep(100);
+            sleep(100);
             out.println(password);
-            Thread.sleep(100);
+            sleep(100);
             out.println("config");
-            Thread.sleep(100);
+            sleep(100);
 
             // Ler comandos do arquivo
             readCommandsFromFile(nomeArq);
 
             // Espera até que o processamento do comando (sh run) esteja completo
-            thread.join(); // Aguarda o término da thread de leitura (run)
+            // thread.join(); // Aguarda o término da thread de leitura (run)
 
             // Mostra a mensagem que deu tudo certo e alerta o usuario para salvar as
             // configurações
@@ -97,6 +99,7 @@ public class TelnetFhtt implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(
                 "log" + this.oltName + "Telnet.txt", true))) {
@@ -135,7 +138,7 @@ public class TelnetFhtt implements Runnable {
                 System.out.print("Progresso " + this.oltName + ": " + progressPercentage + "%\r");
                 try {
                     // Adiciona um atraso de 100ms após cada out.println
-                    Thread.sleep(100);
+                    sleep(100);
                 } catch (final InterruptedException e) {
                     Thread.currentThread().interrupt(); // Respeita a interrupção
                 }
@@ -156,7 +159,6 @@ public class TelnetFhtt implements Runnable {
                 // Define active como false para encerrar a thread
                 socket.close();
             } catch (final IOException e) {
-                e.printStackTrace();
             }
             thread.interrupt();
             active = false;
