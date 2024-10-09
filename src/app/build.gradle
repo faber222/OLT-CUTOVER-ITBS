@@ -29,6 +29,8 @@ dependencies {
     implementation("org.xerial:sqlite-jdbc:3.43.0.0")
     implementation("com.google.zxing:core:3.5.0")
     implementation("commons-net:commons-net:3.8.0")
+    implementation("com.jcraft:jsch:0.1.55")
+    
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
