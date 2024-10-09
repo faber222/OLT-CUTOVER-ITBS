@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import org.analytics.DataAnaliser;
 import org.config.ConfigCutoverGenerator;
+import org.ssh.SSHClient;
 import org.telnet.Telnet;
 import org.telnet.TelnetFhtt;
 
@@ -66,14 +67,41 @@ public class App {
         return oltType;
     }
 
-    public void createMessage(Scanner scanner) {
+    public void telnetAccess(String ip, int port, String user, String pass) {
+        Telnet telnet = new Telnet(ip, port, user, pass);
+        telnet.oltAccess();
+    }
+
+    public void sshAccess(String ip, int port, String user, String pass) {
+        SSHClient sshClient = new SSHClient(ip, port, user, pass);
+        sshClient.oltAccess();
+    }
+
+    public boolean createMessage(Scanner scanner) {
+        boolean isSSH = false;
         System.out.print("Digite o ip da OLT de origem: ");
         this.ipOrigem = scanner.nextLine();
         System.out.print("Digite o usuario: ");
         this.userOrigem = scanner.nextLine();
         System.out.print("Digite a senha: ");
         this.passOrigem = scanner.nextLine();
-        System.out.print("Digite a porta telnet:");
+        System.out.println("SSH ou TELNET?");
+        System.out.println("1 - SSH");
+        System.out.println("2 - TELNET");
+        System.out.print("> ");
+        String telnetSsh = scanner.nextLine();
+        switch (telnetSsh) {
+            case "1":
+                isSSH = true;
+                break;
+            case "2":
+                isSSH = false;
+                break;
+            default:
+                System.out.println("Numero invalido!");
+                System.exit(0);
+        }
+        System.out.print("Digite a porta: ");
         this.portOrigem = scanner.nextLine();
         System.out.println("Para qual olt deseja migrar?");
         System.out.println("1 - AN5000");
@@ -92,6 +120,7 @@ public class App {
                 System.out.println("Numero invalido!");
                 System.exit(0);
         }
+        return isSSH;
 
     }
 
@@ -122,10 +151,13 @@ public class App {
 
             switch (prompt) {
                 case "1":
-                    app.createMessage(scanner);
-                    Telnet telnet = new Telnet(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()),
-                            app.getUserOrigem(), app.getPassOrigem());
-                    telnet.oltAccess();
+                    if (!app.createMessage(scanner)) {
+                        app.telnetAccess(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()), app.getUserOrigem(),
+                                app.getPassOrigem());
+                    } else {
+                        app.sshAccess(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()), app.getUserOrigem(),
+                                app.getPassOrigem());
+                    }
 
                     DataAnaliser dataAnaliser = new DataAnaliser();
                     dataAnaliser.start();
@@ -142,10 +174,13 @@ public class App {
                     tesTelnetFhtt.oltAccess("scriptMigracao.txt");
                     break;
                 case "3":
-                    app.createMessage(scanner);
-                    Telnet telnet2 = new Telnet(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()),
-                            app.getUserOrigem(), app.getPassOrigem());
-                    telnet2.oltAccess();
+                    if (!app.createMessage(scanner)) {
+                        app.telnetAccess(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()), app.getUserOrigem(),
+                                app.getPassOrigem());
+                    } else {
+                        app.sshAccess(app.getIpOrigem(), Integer.parseInt(app.getPortOrigem()), app.getUserOrigem(),
+                                app.getPassOrigem());
+                    }
 
                     DataAnaliser dataAnaliser2 = new DataAnaliser();
                     dataAnaliser2.start();
@@ -165,7 +200,6 @@ public class App {
                     System.out.println("Saindo...!");
                     System.exit(0);
                     break;
-
                 default:
                     scanner.close();
                     System.out.println("Numero invalido!");
